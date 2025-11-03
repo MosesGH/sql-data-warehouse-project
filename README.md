@@ -5,7 +5,7 @@ This project demonstrates a comp[rehensive data warehousing and analytics soluti
 
 ---
 
-# Prject Requirements
+# Project Requirements
 ## Building the Data WArehouse (Data Engineering)
 
 ### Objective
@@ -19,7 +19,7 @@ Develop a modern data warehouse using SQL Server to consolidate sales data, enab
 **Documentation**: Provide clear documentation of the data model to support both business stakeholders and the analytics teams. 
 
 ## BI: Analytics and Reporting (Datya Analytics
-###Objective
+### Objective
 Develop SQL-based analytics to deliver detailed insights into:
 - **Customer Behaviour**
 - **Product Performance**
@@ -29,7 +29,7 @@ Develop SQL-based analytics to deliver detailed insights into:
 
 ---
 
-##Licence
+## Licence
 This project is licensed under the [MIT license](https://opensource.org/license/mit). You are free to use, modify, and share this project with proper attribution.
 
 
