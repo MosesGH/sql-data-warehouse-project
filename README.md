@@ -1,2 +1,35 @@
 # sql-data-warehouse-project
 Buillding a modern data warehouse with SQL sever, including ETL processes, data modelling, and analytices
+
+This project demonstrates a comp[rehensive data warehousing and analytics solution, from building a data warehouse to generating actionable insights.
+
+---
+
+# Prject Requirements
+## Building the Data WArehouse (Data Engineering)
+
+### Objective
+Develop a modern data warehouse using SQL Server to consolidate sales data, enabling analytiucal reporting and informed decision-making. 
+
+### Specifications
+**Data Sources**:Import data from two source systenms (ERP and CROM) provided as CSV files.
+**Data Quality**:Cleanse and resolve data quality issues proor to analysis
+**Integration**: Combine Both Sourtces into a single, user-friendly data model designed for analytical queries
+**Scope**:Focus on the latest dataset only; hostorisation of data is not required
+**Documentation**: Provide clear documentation of the data model to support both business stakeholders and the analytics teams. 
+
+## BI: Analytics and Reporting (Datya Analytics
+###Objective
+Develop SQL-based analytics to deliver detailed insights into:
+- **Customer Behaviour**
+- **Product Performance**
+- **Sales Trends**
+
+- these insights empower stakeholders with key business metrics, enabling strategic decision-making.
+
+---
+
+##Licence
+This project is licensed under the [MIT license](https://opensource.org/license/mit). You are free to use, modify, and share this project with proper attribution.
+
+
