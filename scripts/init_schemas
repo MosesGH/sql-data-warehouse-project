@@ -1,0 +1,61 @@
+CREATE TABLE bronze.crm_cust_info
+(
+cst_id INT,
+cst_key NVARCHAR(50),
+cst_firstname NVARCHAR(50),
+cst_lastname NVARCHAR(50),
+cst_marital_status NVARCHAR(50),
+cst_gnder NVARCHAR(50),
+cst_create_date DATE
+)
+GO
+
+
+Create Table bronze.crm_prd_info
+(
+crm_prd_id INT,
+crm_prd_key NVARCHAR(50),
+crm_prd_cost INT,
+crm_prd_line NVARCHAR(50),
+crm_prd_start_dt DATE,
+crm_prd_end_dt DATE
+)
+GO
+
+Create Table bronze.crm_sales_details
+(
+crm_sls_ord_num NVARCHAR(50),
+crm_sls_prd_key NVARCHAR(50),
+crm_sls_cust_id INT,
+crm_sls_order_dt DATE,
+crm_sls_ship_dt DATE,
+crm_sls_due_dt DATE,
+crm_sls_sales INT,
+crm_sls_quantity INT,
+crm_sls_price INT
+)
+GO
+
+Create Table bronze.erp_CUST_AZ12
+(
+erp_CID NVARCHAR(50),
+erp_BDATE DATE,
+erp_GEN NVARCHAR(50)
+)
+GO
+
+Create Table bronze.erp_LOC_A101
+(
+erp_CID NVARCHAR(50),
+erp_CNTRY NVARCHAR(50)
+)
+GO
+
+Create Table bronze.erp_PX_CAT_G1V2
+(
+erp_ID NVARCHAR(50),
+erp_CAT NVARCHAR(50),
+erp_SUBCAT NVARCHAR(50),
+erp_MAINTENANCE NVARCHAR(50)
+)
+GO
