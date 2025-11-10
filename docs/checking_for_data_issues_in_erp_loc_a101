@@ -1,0 +1,57 @@
+SELECT
+erp_CID,
+erp_CNTRY
+FROM bronze.erp_loc_a101
+
+-- will integrate on the CID tp tje customer key
+
+SELECT cst_key from silver.crm_cust_info
+
+-- there is a '-' between elements of the CID in the erp_loc, this needs removing to align with
+-- the existinig cst_key in crm_cust_info. 
+
+SELECT
+REPLACE(erp_CID, '-', '') erp_CID,
+erp_CNTRY
+FROM bronze.erp_loc_a101 WHERE REPLACE(erp_CID, '-', '') NOT IN
+(SELECT cst_key FROM silver.crm_cust_info)
+-- chekcs if our tranformation has created any entriues that are not in the silver layer. 
+
+
+SELECT DISTINCT erp_CNTRY FROM bronze.erp_loc_a101 ORDER BY erp_CNTRY
+-- abreviations and fulll length mixed
+-- this is a manual process where you have to catch all errors
+
+
+SELECT
+REPLACE(erp_CID, '-', '') erp_CID,
+CASE WHEN TRIM(erp_CNTRY) = 'DE' THEN 'Germany'
+	WHEN TRIM(erp_CNTRY) IN ('US' , 'USA') THEN 'United States'
+	WHEN TRIM(erp_CNTRY) = '' OR erp_CNTRY IS NULL THEN 'n/a'
+	ELSE TRIM(erp_CNTRY)
+END AS erp_CNTRY
+FROM bronze.erp_loc_a101
+
+--nothing cvhanged in the ddl, so can just insert.
+
+INSERT INTO silver.erp_loc_a101
+(erp_CID, erp_CNTRY)
+SELECT
+REPLACE(erp_CID, '-', '') erp_CID,
+CASE WHEN TRIM(erp_CNTRY) = 'DE' THEN 'Germany'
+	WHEN TRIM(erp_CNTRY) IN ('US' , 'USA') THEN 'United States'
+	WHEN TRIM(erp_CNTRY) = '' OR erp_CNTRY IS NULL THEN 'n/a'
+	ELSE TRIM(erp_CNTRY)
+END AS erp_CNTRY
+FROM bronze.erp_loc_a101
+
+--check the final insert
+
+SELECT DISTINCT erp_CNTRY FROM silver.erp_loc_a101 ORDER BY erp_CNTRY
+--fine, so final check
+
+
+SELECT
+erp_CID,
+erp_CNTRY
+FROM silver.erp_loc_a101
