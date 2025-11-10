@@ -1,0 +1,37 @@
+SELECT
+erp_ID,
+erp_CAT,
+erp_SUBCAT,
+erp_MAINTENANCE -- This should have been removed in an earlier step to ensurte conformance with design document. 
+FROM bronze.erp_px_cat_g1v2
+
+-- id cionnects with prd_key which was made into the cat_id in the siulver crm. 
+
+--check for unwanted spaces in other string columns
+SELECT * FROM bronze.erp_px_cat_g1v2
+WHERE erp_CAT != TRIM(erp_CAT) OR erp_SUBCAT != TRIM(erp_SUBCAT) OR erp_MAINTENANCE != TRIM(erp_MAINTENANCE)
+
+
+--date standardization and consistency
+SELECT DISTINCT
+erp_MAINTENANCE
+FROM bronze.erp_px_cat_g1v2
+
+-- all good, ready to load and then check
+
+INSERT INTO silver.erp_px_cat_g1v2
+(erp_ID, erp_CAT, erp_SUBCAT, erp_MAINTENANCE)
+SELECT
+erp_ID,
+erp_CAT,
+erp_SUBCAT,
+erp_MAINTENANCE
+FROM bronze.erp_px_cat_g1v2
+
+--check
+
+SELECT DISTINCT
+erp_CAT
+FROM silver.erp_px_cat_g1v2
+
+SELECT * FROM silver.erp_px_cat_g1v2
