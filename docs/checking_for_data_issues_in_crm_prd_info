@@ -1,0 +1,177 @@
+SELECT
+	prd_id,
+	prd_key,
+	prd_nm,
+	prd_cost,
+	prd_line,
+	prd_start_dt,
+	prd_end_dt
+FROM bronze.crm_prd_info
+
+-- Checking for duplicates in the primary key
+-- Expectations: None
+Select
+prd_id
+From bronze.crm_prd_info
+Group BY prd_id
+HAving Count(*) >1 or prd_id IS NULL
+
+-- From Key Flow diagram, we know that this needs splitting into multiple columns
+SELECT
+	prd_id,
+	prd_key,
+	REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') AS cat_id, -- cat_id is the name in another table
+	SUBSTRING(prd_key, 7, LEN(prd_key)) AS prd_key,
+	prd_nm,
+	prd_cost,
+	prd_line,
+	prd_start_dt,
+	prd_end_dt
+FROM bronze.crm_prd_info
+WHERE REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') NOT IN 
+(SELECT DISTINCT erp_ID FROM bronze.erp_px_cat_g1v2)
+
+-- splitting again into the other half
+SELECT
+	prd_id,
+	prd_key,
+	REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') AS cat_id, -- cat_id is the name in another table
+	SUBSTRING(prd_key, 7, LEN(prd_key)) AS prd_key,
+	prd_nm,
+	prd_cost,
+	prd_line,
+	prd_start_dt,
+	prd_end_dt
+FROM bronze.crm_prd_info
+--WHERE SUBSTRING(prd_key, 7, LEN(prd_key)) IN 
+--	(SELECT sls_prd_key FROM bronze.crm_sales_details) -- there are products in the crm_prd_info that are not in the _crm_sales_details, thats fine, it just means there are products that have never sold. 
+
+--checking that the products all have costs. 
+SELECT prd_cost
+FROM bronze.crm_prd_info
+WHERE prd_cost < 0 OR prd_cost IS NULL -- there are two nulls so will replace with 0 for uniformity. 
+
+SELECT
+	prd_id,
+	prd_key,
+	REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') AS cat_id, -- cat_id is the name in another table
+	SUBSTRING(prd_key, 7, LEN(prd_key)) AS prd_key,
+	prd_nm,
+	ISNULL(prd_cost, 0) AS prd_cost,
+	prd_line,
+	prd_start_dt,
+	prd_end_dt
+FROM bronze.crm_prd_info
+
+SELECT DISTINCT prd_line
+FROM bronze.crm_prd_info -- would ask someone who is inb the know what these characters stand for before replacing since it has been decied to not have abbreviations. 
+
+SELECT
+	prd_id,
+	prd_key,
+	REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') AS cat_id, -- cat_id is the name in another table
+	SUBSTRING(prd_key, 7, LEN(prd_key)) AS prd_key,
+	prd_nm,
+	ISNULL(prd_cost, 0) AS prd_cost,
+	CASE UPPER(TRIM(prd_line))
+		WHEN 'M' THEN 'Mountain'
+		WHEN 'R' THEN 'Road'
+		WHEN 'S' THEN 'Other Sales'
+		WHEN 'T' THEN 'Touring'
+		ELSE 'n/a'
+END AS prd_line, 
+	prd_start_dt,
+	prd_end_dt
+FROM bronze.crm_prd_info
+
+-- Check foir Invalid Date Orders
+SELECT *
+FROM bronze.crm_prd_info
+WHERE prd_end_dt < prd_start_dt
+
+/* it can be seen that the end dates and the start dates do not matchj up, in many cases,
+the end date is coming before the start date, and where there are multiple records, there
+would be an overlap of periods between product price changes, to fix this, the end date
+will be changed to next product start date -1
+*/
+
+SELECT
+	prd_id,
+	prd_key,
+	REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') AS cat_id, -- cat_id is the name in another table
+	SUBSTRING(prd_key, 7, LEN(prd_key)) AS prd_key,
+	prd_nm,
+	ISNULL(prd_cost, 0) AS prd_cost,
+	CASE UPPER(TRIM(prd_line))
+		WHEN 'M' THEN 'Mountain'
+		WHEN 'R' THEN 'Road'
+		WHEN 'S' THEN 'Other Sales'
+		WHEN 'T' THEN 'Touring'
+		ELSE 'n/a'
+	END AS prd_line,
+	CAST(prd_Start_dt AS DATE) AS prd_start_dt,
+	CAST(
+		LEAD (prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt) - 1 -- lead selects one line ahead
+		AS DATE
+	) AS prd_end_dt -- calculate end date as one dat before the next start date
+FROM bronze.crm_prd_info
+
+
+--Insert into silver table and then check
+--update Silver DDL to include the new columnn and push the change to GIT
+
+INSERT INTO silver.crm_prd_info
+(
+	prd_id,
+	cat_id,
+	prd_key,
+	prd_nm,
+	prd_cost,
+	prd_line,
+	prd_start_dt,
+	prd_end_dt
+)
+SELECT
+prd_id,
+REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') AS cat_id, -- cat_id is the name in another table
+SUBSTRING(prd_key, 7, LEN(prd_key)) AS prd_key,
+prd_nm,
+ISNULL(prd_cost, 0) AS prd_cost,
+CASE UPPER(TRIM(prd_line))
+	WHEN 'M' THEN 'Mountain'
+	WHEN 'R' THEN 'Road'
+	WHEN 'S' THEN 'Other Sales'
+	WHEN 'T' THEN 'Touring'
+	ELSE 'n/a'
+END AS prd_line,
+CAST(prd_Start_dt AS DATE) AS prd_start_dt,
+CAST(
+	LEAD (prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt) - 1 -- lead selects one line ahead
+	AS DATE
+) AS prd_end_dt -- calculate end date as one dat before the next start date
+FROM bronze.crm_prd_info
+
+--Then as before  with the last table, check the quality of the data. 
+-- Checking for duplicates in the primary key
+Select
+prd_id
+From silver.crm_prd_info
+GROUP BY prd_id
+HAVING Count(*) >1 or prd_id IS NULL
+
+--checking that the products all have costs. 
+SELECT prd_cost
+FROM silver.crm_prd_info
+WHERE prd_cost < 0 OR prd_cost IS NULL
+
+SELECT DISTINCT prd_line
+FROM silver.crm_prd_info
+
+-- Check foir Invalid Date Orders
+SELECT *
+FROM silver.crm_prd_info
+WHERE prd_end_dt < prd_start_dt
+
+--Final Check
+SELECT *
+FROM silver.crm_prd_info
