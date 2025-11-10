@@ -1,0 +1,183 @@
+SELECT
+sls_ord_num,
+sls_prd_key,
+sls_cust_id,
+sls_order_dt,
+sls_ship_dt,
+sls_due_dt,
+sls_sales,
+sls_quantity,
+sls_price
+FROM silver.crm_sales_details
+WHERE sls_ord_num != trim(sls_ord_num)
+--None that need trimming so wer are fine, check all of the others. 
+
+SELECT
+sls_ord_num,
+sls_prd_key,
+sls_cust_id,
+sls_order_dt,
+sls_ship_dt,
+sls_due_dt,
+sls_sales,
+sls_quantity,
+sls_price
+FROM silver.crm_sales_details
+WHERE sls_prd_key NOT IN (SELECT prd_key FROM silver.crm_prd_info)
+--WHERE sls_cust_id NOT IN (SELECT cst_id FROM silver.crm_cust_info) -- checking these both as this table will be linked to otrhers from these keys. 
+--using the silver layer here as it has been cleaned and transformed for the tables being queried. 
+
+--The dates however are obviously not dates, they are integers, so we need to change the data type
+-- need to check those columns first
+
+SELECT
+sls_order_dt
+FROM bronze.crm_sales_details
+WHERE sls_order_dt <= 0
+-- the exisat so need to be set to null, also need to check that all dates are length 8
+
+SELECT 
+NULLIF(sls_order_dt,0) sls_order_dt
+FROM bronze.crm_sales_details
+WHERE sls_order_dt <= 0 OR LEN(sls_order_dt) != 8 
+OR sls_order_dt >20500101 
+OR sls_order_dt < 19000101
+-- nulls as before but also several dates that can not be converted as the integers are non suitable. 
+-- will need to uypdate the select statement to exclude them.
+
+SELECT
+sls_ord_num,
+sls_prd_key,
+sls_cust_id,
+CASE WHEN sls_order_dt = 0 OR LEN(sls_order_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_order_dt AS VARCHAR) AS DATE) --cant convert straight to date in sql server
+END as sls_order_dt,
+CASE WHEN sls_ship_dt = 0 OR LEN(sls_ship_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_ship_dt AS VARCHAR) AS DATE) --cant convert straight to date in sql server
+END as sls_ship_dt, -- no errors but will apply anyway, other option is to run checks every day. 
+CASE WHEN sls_due_dt = 0 OR LEN(sls_order_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_due_dt AS VARCHAR) AS DATE) --cant convert straight to date in sql server
+END as sls_due_dt,
+sls_sales,
+sls_quantity,
+sls_price
+FROM bronze.crm_sales_details
+-- now all dates will avoid poor formatting
+
+
+
+-- now clean need to checkl that the dates are not out of order
+SELECT * FROM bronze.crm_sales_details
+WHERE sls_order_dt > sls_ship_dt OR sls_order_dt > sls_due_dt
+-- no such errors
+
+-- final checks on sales quantity and price
+-- sales should be quantity * price
+
+SELECT DISTINCT
+sls_sales,
+sls_quantity,
+sls_price
+FROM silver.crm_sales_details
+WHERE sls_sales != (sls_quantity * sls_price)
+OR sls_sales IS NULL OR sls_quantity <= 0 OR sls_price <= 0
+ORDER BY sls_sales, sls_quantity, sls_price
+--lots of errors so need to speak with people from the business, either they can fix it in the source, until this is fixed, the warehouse will have bad data
+--or you decide if those sales are very important, if not, they can  be disregarded.
+---or other transformations can be agreed upon
+
+
+SELECT DISTINCT
+sls_sales AS old_sls_sales,
+CASE WHEN sls_sales IS NULL OR sls_sales <= 0 OR sls_sales != sls_quantity * ABS(sls_price)
+	THEN sls_quantity * ABS(sls_price)
+	ELSE sls_sales
+END AS sls_sales,
+sls_quantity,
+CASE WHEN sls_price IS NULL OR sls_price <= 0
+		THEN sls_sales / NULLIF(sls_quantity, 0)
+	ELSE sls_price
+END AS sls_price, 
+sls_price as old_sls_price
+FROM bronze.crm_sales_details
+WHERE sls_sales != (sls_quantity * sls_price)
+OR sls_sales IS NULL OR sls_quantity <= 0 OR sls_price <= 0
+ORDER BY sls_sales, sls_quantity, sls_price
+
+-- now all bad data is cleaned out, inset in to full body
+
+SELECT
+sls_ord_num,
+sls_prd_key,
+sls_cust_id,
+CASE WHEN sls_order_dt = 0 OR LEN(sls_order_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_order_dt AS VARCHAR) AS DATE) --cant convert straight to date in sql server
+END as sls_order_dt,
+CASE WHEN sls_ship_dt = 0 OR LEN(sls_ship_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_ship_dt AS VARCHAR) AS DATE) --cant convert straight to date in sql server
+END as sls_ship_dt, -- no errors but will apply anyway, other option is to run checks every day. 
+CASE WHEN sls_due_dt = 0 OR LEN(sls_order_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_due_dt AS VARCHAR) AS DATE) --cant convert straight to date in sql server
+END as sls_due_dt,
+CASE WHEN sls_sales IS NULL OR sls_sales <= 0 OR sls_sales != sls_quantity * ABS(sls_price)
+	THEN sls_quantity * ABS(sls_price)
+	ELSE sls_sales
+END AS sls_sales,
+sls_quantity,
+CASE WHEN sls_price IS NULL OR sls_price <= 0
+		THEN sls_sales / NULLIF(sls_quantity, 0)
+	ELSE sls_price
+END AS sls_price
+FROM bronze.crm_sales_details
+
+-- data is clean and ready to go, must now prep silver table for import by reflecting any changes such as changes from varchar to date
+
+INSERT INTO silver.crm_sales_details 
+(
+sls_ord_num,
+sls_prd_key,
+sls_cust_id,
+sls_order_dt,
+sls_ship_dt,
+sls_due_dt,
+sls_sales,
+sls_quantity,
+sls_price
+)
+SELECT
+sls_ord_num,
+sls_prd_key,
+sls_cust_id,
+CASE WHEN sls_order_dt = 0 OR LEN(sls_order_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_order_dt AS VARCHAR) AS DATE) --cant convert straight to date in sql server
+END as sls_order_dt,
+CASE WHEN sls_ship_dt = 0 OR LEN(sls_ship_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_ship_dt AS VARCHAR) AS DATE) --cant convert straight to date in sql server
+END as sls_ship_dt, -- no errors but will apply anyway, other option is to run checks every day. 
+CASE WHEN sls_due_dt = 0 OR LEN(sls_order_dt) != 8 THEN NULL
+	ELSE CAST(CAST(sls_due_dt AS VARCHAR) AS DATE) --cant convert straight to date in sql server
+END as sls_due_dt,
+CASE WHEN sls_sales IS NULL OR sls_sales <= 0 OR sls_sales != sls_quantity * ABS(sls_price)
+	THEN sls_quantity * ABS(sls_price)
+	ELSE sls_sales
+END AS sls_sales,
+sls_quantity,
+CASE WHEN sls_price IS NULL OR sls_price <= 0
+		THEN sls_sales / NULLIF(sls_quantity, 0)
+	ELSE sls_price
+END AS sls_price
+FROM bronze.crm_sales_details
+
+-- now that the silver table reflects the changes and the data has been inserted, the healthof the sliver table needs checcking, run the same checks above again, but for the silver table. 
+
+SELECT DISTINCT
+sls_sales,
+sls_quantity,
+sls_price
+FROM silver.crm_sales_details
+WHERE sls_sales != (sls_quantity * sls_price)
+OR sls_sales IS NULL OR sls_quantity <= 0 OR sls_price <= 0
+ORDER BY sls_sales, sls_quantity, sls_price
+--all fine
+
+SELECT * FROM silver.crm_sales_details
