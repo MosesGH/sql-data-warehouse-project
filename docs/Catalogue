@@ -1,0 +1,52 @@
+# Data Dictionary For Gold Layer
+## Overview
+
+The Gold layer is the business-level data representation, structured to support analytical and reporting use cases.
+It consists of **dimension tables**, and **fact tables** for specific business metrics
+
+
+### 1. gold.dim_customers
+| column_name  | data_type | description |
+| ------------- | ------------- | ------------- |
+| customer_key | Int | Surrogate key used to identify each custoimer record and to link tables. |
+| customer_id | Int  | unqique identifier tied to each customer |
+| customer_number  | NVARCHAR(50)  | Unique number that identifies the customer used for tracking and referencing  |
+| first_name  | NVARCHAR(50)  | First name of the customer  e.g. James|
+| last_name  | NVARCHAR(50)  | last name of the customer E.g. Martins|
+| Country  | NVARCHAR(50) | Country the customer comes from E.g. Austrtalia |
+| marital status  | NVARCHAR(50)  | Marital Status pof the customer e.g. Single |
+| gender  | NVARCHAR(50)  | Gender of the Customer e.g. Male|
+| birthdate  | Date  | Birth date of the customer  e.g. 10-10-2025|
+| create_date  | Date | Date customer account was created e.g. 11-11-2024 |
+
+
+### 2. gold.dim_products
+| column_name  | data_type | description |
+| ------------- | ------------- | ------------- |
+| product_key  | INT  | contains a product_key, distinct, used to link other tables  |
+| product_id  | INT | contains a product_id, distinct, used to link other tables  |
+| product_number  | NVARCHAR(50) | contains a unique product number  |
+| product_name  | NVARCHAR(50) | contains a unique product name  |
+| category_id  | NVARCHAR(50) | contains information about the category of the product e.g. CO-RF - Components - Road Frame  |
+| category  | NVARCHAR(50) | Category of the product e.g. Components  |
+| subcategory  | NVARCHAR(50) | subcatagory e.g. Mountain Bikes  |
+| maintenance  | NVARCHAR(50) | Does the product require maintenance  |
+| cost  | INT  | Cost pper unit for the company |
+| product_line  | NVARCHAR(50)  | which product line is the product? part of e.g. road, mountain. Broader and can apply to many products  |
+| start_date  | Date | When was the product first supplied  |
+
+### 3. gold.fact_sales
+| column_name  | data_type | description |
+| ------------- | ------------- | ------------- |
+| order_number | NVARCHAR  | Contains the unique order number e.g. 'SO43697'  |
+| product_key  | INT  | contains a product_key, distinct, used to link other tables  |
+| customer_key  | INT  | Contains a dsistinct customer key, e.g. '10769' used to identify each indivcidual customer/
+| order_date  | DATE  | Contains the date the product was mostr recently ordered by a given customer  |
+| shipping_date  | DATE  | Contains the date that the p[roduct was shipped  |
+| due_date  | DATE  | Contains the date that a product is due to arrive  |
+| sales_amount | INT | Sales = Quantity * Price  |
+| quantity  | INT  | Amount sold for the specific order line  |
+| price  | INT  | price oif the product at time of sale  |
+
+
+
