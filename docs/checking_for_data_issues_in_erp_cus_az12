@@ -1,0 +1,113 @@
+SELECT
+erp_CID,
+erp_BDATE,
+erp_GEN
+FROM bronze.erp_cust_az12
+
+--connect to crm_cust_info through cID to cst_key
+
+SELECT * FROM silver.crm_cust_info
+
+-- by checking WHERE cid LIKE '%...' in bronzxe.erp_cust.az12 pulling a key from cst_key
+-- we can see that NAS is present on the erp_CID entries
+-- will need to remove this. 
+
+
+SELECT
+erp_CID,
+CASE WHEN erp_CID LIKE 'NAS%' THEN SUBSTRING(erp_CID, 4, LEN(erp_CID))
+	ELSE erp_CID
+END erp_CID,
+erp_BDATE,
+erp_GEN
+FROM bronze.erp_cust_az12
+WHERE CASE WHEN erp_CID LIKE 'NAS%' THEN SUBSTRING(erp_CID, 4, LEN(erp_CID))
+	ELSE erp_CID
+END NOT IN (SELECT DISTINCT cst_key FROM silver.crm_cust_info) -- checking all present
+
+-- removed, taking string from a certtain point and then checked
+
+
+SELECT DISTINCT
+erp_BDATE
+FROM bronze.erp_cust_az12
+WHERE erp_BDATE < '1924-01-01' OR erp_BDATE > GETDATE()
+-- few strange dates, consult then change. 
+
+SELECT
+erp_CID,
+CASE WHEN erp_CID LIKE 'NAS%' THEN SUBSTRING(erp_CID, 4, LEN(erp_CID))
+	ELSE erp_CID
+END erp_CID,
+CASE WHEN erp_BDATE > GETDATE() THEN NULL
+	else erp_BDATE
+END AS erp_BDATE,
+erp_GEN
+FROM bronze.erp_cust_az12
+
+-- removed definitely eronious values
+
+SELECT DISTINCT 
+erp_GEN
+FROM bronze.erp_cust_az12
+
+-- only want male, female, and null, so need to change
+
+SELECT DISTINCT 
+CASE WHEN UPPER(TRIM(erp_GEN)) IN ('F', 'FEMALE') THEN 'Female'
+	WHEN UPPER(TRIM(erp_GEN)) IN ('M', 'MALE') THEN 'Male'
+	ELSE 'n/a'
+END AS erp_GEN
+FROM bronze.erp_cust_az12
+-- cleaned, so now add
+
+SELECT DISTINCT
+erp_BDATE
+FROM bronze.erp_cust_az12
+WHERE erp_BDATE < '1924-01-01' OR erp_BDATE > GETDATE()
+-- few strange dates, consult then change. 
+
+SELECT
+erp_CID,
+CASE WHEN erp_CID LIKE 'NAS%' THEN SUBSTRING(erp_CID, 4, LEN(erp_CID))
+	ELSE erp_CID
+END erp_CID,
+CASE WHEN erp_BDATE > GETDATE() THEN NULL
+	else erp_BDATE
+END AS erp_BDATE,
+CASE WHEN UPPER(TRIM(erp_GEN)) IN ('F', 'FEMALE') THEN 'Female'
+	WHEN UPPER(TRIM(erp_GEN)) IN ('M', 'MALE') THEN 'Male'
+	ELSE 'n/a'
+END AS erp_GEN
+FROM bronze.erp_cust_az12
+
+-- nop change to columns or data types, no need to update silver ddl, spo can ,move straight to insert and check. 
+
+
+INSERT INTO silver.erp_cust_az12(erp_CID,erp_BDATE, erp_GEN)
+SELECT
+CASE WHEN erp_CID LIKE 'NAS%' THEN SUBSTRING(erp_CID, 4, LEN(erp_CID))
+	ELSE erp_CID
+END erp_CID,
+CASE WHEN erp_BDATE > GETDATE() THEN NULL
+	else erp_BDATE
+END AS erp_BDATE,
+CASE WHEN UPPER(TRIM(erp_GEN)) IN ('F', 'FEMALE') THEN 'Female'
+	WHEN UPPER(TRIM(erp_GEN)) IN ('M', 'MALE') THEN 'Male'
+	ELSE 'n/a'
+END AS erp_GEN
+FROM bronze.erp_cust_az12
+
+---checking out of range dates
+
+SELECT DISTINCT
+erp_BDATE
+FROM silver.erp_cust_az12
+WHERE erp_BDATE < '1924-01-01' OR erp_BDATE > GETDATE()
+
+
+--data standardisation and consistency
+SELECT DISTINCT erp_GEN
+FROM silver.erp_cust_az12
+
+select * FROM silver.erp_cust_az12
