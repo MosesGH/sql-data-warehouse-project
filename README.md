@@ -27,9 +27,30 @@ Develop SQL-based analytics to deliver detailed insights into:
 
 - these insights empower stakeholders with key business metrics, enabling strategic decision-making.
 
+## Data Architecture
+The data architecture for the project follows the medallion architecture, Bronze, Sil;ver, and Gold Layers
+
+<img width="379" height="282" alt="image" src="https://github.com/user-attachments/assets/0b91aa12-115a-4071-a95d-a92eb0b73480" />
+
+- **Bronze**
+    - raw and unprocessed data as from sources
+    - A point to return to for traceability and debugging.
+    - Data is ingested for CSV files in SQL Server Database
+- **Silver**
+    - Clean and standarised data
+    - Basic transformations are applied to prepare the data for analysis
+- **Gold**
+    - Business Ready Data
+    - Provide data to be consumed for reporting and analytics
+
+## Repository Structure
 ---
 
 ## Licence
 This project is licensed under the [MIT license](https://opensource.org/license/mit). You are free to use, modify, and share this project with proper attribution.
 
 
+## About Me
+Hi, I'm Moses.
+
+I completed this project to better inrove my understanding of how information flows through databases and how to extract data and create automated reports.
