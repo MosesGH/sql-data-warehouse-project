@@ -57,4 +57,4 @@ This project is licensed under the [MIT license](https://opensource.org/license/
 ## About Me
 Hi, I'm Moses.
 
-I completed this project to better inrove my understanding of how information flows through databases and how to extract data and create automated reports.
+I completed this project to better improve my understanding of how information flows through databases and how to extract data.
