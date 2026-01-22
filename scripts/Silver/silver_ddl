@@ -5,7 +5,7 @@
 	Script Purpose:
 		This script creates tables in the 'silver' schema, dropping existing
 		tables if they already exist
-		Tun the script to re-define the DDL structure of the 'Bronze' tables
+		Run the script to re-define the DDL structure of the 'Bronze' tables
 	==============================================================================
 */
 
