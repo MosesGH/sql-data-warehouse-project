@@ -4,7 +4,7 @@ Buillding a modern data warehouse with SQL sever, including ETL processes, data 
 This project demonstrates a comp[rehensive data warehousing and analytics solution, from building a data warehouse to generating actionable insights.
 
 ---
-#Project Links and Tools
+# Project Links and Tools
 - [Datasets](url): Project Datasets (csv)
 - [SQL Sever Management Studio](url)
 - [DrawIO](url) - Used to design the data architecture, models, flows and any other technical diagrams throughout the projects
