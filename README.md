@@ -9,6 +9,7 @@ This project demonstrates a comp[rehensive data warehousing and analytics soluti
 - [SQL Sever Management Studio](url)
 - [DrawIO](url) - Used to design the data architecture, models, flows and any other technical diagrams throughout the projects
 - [Notion](url) - Online project management tool used to outline key goals of the project and tyack progress.
+- [Guiding course](url) - A link to the course video
 
 # Project Requirements
 ## Building the Data Warehouse (Data Engineering)
