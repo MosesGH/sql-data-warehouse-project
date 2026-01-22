@@ -51,37 +51,43 @@ The data architecture for the project follows the medallion architecture, Bronze
 ---
 - sql-data-warehouse-project
     - datasets/     #Raw datasets used for the project (ERP and CRM data)
-       - souce_crm
-       - source_erp
+       - souce_crm - Customer Relationship Management Data
+       - source_erp - Enterprise Resource Planning Data
     - docs/
-       - Catalgue             # Data Dictionary For Gold Layer
-       - Create Bronze LAyer Tables
-       - Create Database
-       - Data Flow.drawio
-       - Data Warehouse Architecture.drawio
-       - Load Bronze Databse.sql
-       - Table Keys.drawio
-       - Checking_for)datta_issues_in...    # All of the gfollowing ddocuments with similar name type show how the data was pre cleansed of dup;licates, Nulls, Redundant collumns, and potentially eronious data.
-       - Creating_gold Views.sql
-       - Data_model_star_schema
-       - load_silver_database.sql
-       - Silver_ddl.sql
-       - Silver_quality_checks.sql
-    - Scripts
+       - Catalgue - Data Dictionary For Gold Layer
+       - Create Bronze Layer Tables - This script creates the tables on the bronze layer ready for the data to be loaded.
+       - Create Database - This script creates a new database namesd 'DataWarehouse'
+       - Data Flow.drawio - A Visual Showing how data will flow from the CRM and ERP into and through the different layers of the Arhcitecture.
+       - Data Warehouse Architecture.drawio - shows the layers, their object types and the transformations that will be applied to a given layer.
+       - Load Bronze Databse.sql - This script loads the entire bronze database using a full load frpm external CSV files
+       - Table Keys.drawio - Shows the table keys for ther database, highlighting where the tables of the erp and crm connect internally and to eachother.
+       - Checking_for)datta_issues_in... - All of the following ddocuments with similar name type show how the data was pre cleansed of dup;licates, Nulls, Redundant collumns, and potentially eronious data.
+       - Creating_gold Views.sql - This script creates views for the Gold layer in the data warehouse,  ProducING a clean, enriched, and business-ready dataset
+       - Data_model_star_schema - Shows the connections of the star_schema
+       - load_silver_database.sql - This script performs the ETL (extract, Trnasform, Load) process to populate the
+	silver schema tbales from the bronze schema.
+       - Silver_ddl.sql - This script creates tables in the 'silver' schema, dropping existing
+		tables if they already exist - These tables can then be populated
+       - Silver_quality_checks.sql - This script performs vaarious quality checks for data consistency, accuracy
+		and standardisation across the 'silver' schema
+    - Scripts/
        - Bronze
           - Create_bronze_layer_tables.sql
-          - load_bronze_database.sql
+          - load_bronze_database.sql -This script loads the entire bronze database using a full load frpm external CSV files.
+          - proc_load_bronze - As above
        - Silver
-          - init_databse.sql
-          - init_schemas
-          - proc_load_bronze
+          - silver_ddl - This script creates tables in the 'silver' schema, dropping existing
+		tables if they already exist - These tables can then be populated
+          - proc_load_silver - This script performs the ETL (extract, Trnasform, Load) process to populate the silver schema tbales from the bronze schema.
        - Gold
-          - ddl_gold
-    - Tests
+          - ddl_gold - This script creates views for the Gold layer in the data warehouse.
+          - init_database - This script creates a new database namesd 'DataWarehouse'
+          - init_schemas - Creates schemas for data to be divided into.
+    - Tests/
        - Silver_tests
        - quality_checks_gold
-- README.md
-- LICENCE
+    - README.md - Readme that outlines the project key information
+    - LICENCE
 ## Licence
 This project is licensed under the [MIT license](https://opensource.org/license/mit). You are free to use, modify, and share this project with proper attribution.
 
