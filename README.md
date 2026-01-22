@@ -54,19 +54,19 @@ The data architecture for the project follows the medallion architecture, Bronze
        - souce_crm
        - source_erp
     - docs/
-       -     - Catalgue             # Data Dictionary For Gold Layer
-       -     - Create Bronze LAyer Tables
-       -     - Create Database
-       -     - Data Flow.drawio
-       -     - Data Warehouse Architecture.drawio
-       -     - Load Bronze Databse.sql
-       -     - Table Keys.drawio
-       -     - Checking_for)datta_issues_in...    # All of the gfollowing ddocuments with similar name type show how the data was pre cleansed of dup;licates, Nulls, Redundant collumns, and potentially eronious data.
-       -     - Creating_gold Views.sql
-       -     - Data_model_star_schema
-       -     - load_silver_database.sql
-       -     - Silver_ddl.sql
-       -     - Silver_quality_checks.sql
+       - Catalgue             # Data Dictionary For Gold Layer
+       - Create Bronze LAyer Tables
+       - Create Database
+       - Data Flow.drawio
+       - Data Warehouse Architecture.drawio
+       - Load Bronze Databse.sql
+       - Table Keys.drawio
+       - Checking_for)datta_issues_in...    # All of the gfollowing ddocuments with similar name type show how the data was pre cleansed of dup;licates, Nulls, Redundant collumns, and potentially eronious data.
+       - Creating_gold Views.sql
+       - Data_model_star_schema
+       - load_silver_database.sql
+       - Silver_ddl.sql
+       - Silver_quality_checks.sql
     - Scripts
        - Bronze
           - Create_bronze_layer_tables.sql
