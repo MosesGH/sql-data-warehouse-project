@@ -1,7 +1,8 @@
 # sql-data-warehouse-project
+
 Buillding a modern data warehouse with SQL sever, including ETL processes, data modelling, and analytics
 
-This project demonstrates a comp[rehensive data warehousing and analytics solution, from building a data warehouse to generating actionable insights.
+This project demonstrates a comprehensive data warehousing and analytics solution, from building a data warehouse to generating actionable insights.
 
 ---
 # Project Links and Tools
