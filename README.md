@@ -81,11 +81,12 @@ The data architecture for the project follows the medallion architecture, Bronze
           - proc_load_silver - This script performs the ETL (extract, Trnasform, Load) process to populate the silver schema tbales from the bronze schema.
        - Gold
           - ddl_gold - This script creates views for the Gold layer in the data warehouse.
-          - init_database - This script creates a new database namesd 'DataWarehouse'
-          - init_schemas - Creates schemas for data to be divided into.
+       - init_database - This script creates a new database namesd 'DataWarehouse'
+       - init_schemas - Creates schemas for data to be divided into. 
     - Tests/
-       - Silver_tests
-       - quality_checks_gold
+       - Silver_tests - This script performs vaarious quality checks for data consistency, accuracy
+		and standardisation across the 'silver' schema
+       - quality_checks_gold - This script performs quality chgecks to calidate the integrity, consistency, and accuracy of the gold layer.
     - README.md - Readme that outlines the project key information
     - LICENCE
 ## Licence
