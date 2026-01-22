@@ -53,7 +53,6 @@ The data architecture for the project follows the medallion architecture, Bronze
     - Provide data to be consumed for reporting and analytics
 
 ## Repository Structure
----
 - sql-data-warehouse-project
     - datasets/     #Raw datasets used for the project (ERP and CRM data)
        - souce_crm - Customer Relationship Management Data
