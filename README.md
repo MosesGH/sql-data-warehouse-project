@@ -34,7 +34,7 @@ Develop SQL-based analytics to deliver detailed insights into:
 ## Data Architecture
 The data architecture for the project follows the medallion architecture, Bronze, Silver, and Gold Layers
 
-<img width="379" height="282" alt="image" src="https://github.com/user-attachments/assets/0b91aa12-115a-4071-a95d-a92eb0b73480" />
+<img width="1137" height="846" alt="image" src="https://github.com/user-attachments/assets/0b91aa12-115a-4071-a95d-a92eb0b73480" />
 
 - **Bronze**
     - raw and unprocessed data as from sources
