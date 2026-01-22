@@ -22,7 +22,7 @@ Develop a modern data warehouse using SQL Server to consolidate sales data, enab
 
 **Documentation**: Provide clear documentation of the data model to support both business stakeholders and the analytics teams. 
 
-## BI: Analytics and Reporting (Datya Analytics
+## BI: Analytics and Reporting (Datya Analytics)
 ### Objective
 Develop SQL-based analytics to deliver detailed insights into:
 - **Customer Behaviour**
