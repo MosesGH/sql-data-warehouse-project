@@ -49,9 +49,10 @@ The data architecture for the project follows the medallion architecture, Bronze
 
 ## Repository Structure
 ---
-sql-data-warehouse-project
-- datasets/     #Raw datasets used for the project (ERP and CRM data)
-
+- sql-data-warehouse-project
+    - datasets/     #Raw datasets used for the project (ERP and CRM data)
+       - souce_crm
+       - source_erp
 - docs/
 -     - Catalgue             # Data Dictionary For Gold Layer
 -     - Create Bronze LAyer Tables
