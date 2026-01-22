@@ -3,7 +3,7 @@
 DDL SCript: Create Gold Views
 ====================================================================================
 Script Purpose:
-	This script creates ciews for the Gold layer ion the data warehouse.
+	This script creates views for the Gold layer in the data warehouse.
 	The Gold later represents the final dimensions and fact tables (Star Schema)
 
 	Each view performs transformations and combines data from the Silver later to 
