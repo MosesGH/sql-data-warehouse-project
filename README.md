@@ -49,7 +49,38 @@ The data architecture for the project follows the medallion architecture, Bronze
 
 ## Repository Structure
 ---
+sql-data-warehouse-project
+- datasets/     #Raw datasets used for the project (ERP and CRM data)
 
+- docs/
+-     - Catalgue             # Data Dictionary For Gold Layer
+-     - Create Bronze LAyer Tables
+-     - Create Database
+-     - Data Flow.drawio
+-     - Data Warehouse Architecture.drawio
+-     - Load Bronze Databse.sql
+-     - Table Keys.drawio
+-     - Checking_for)datta_issues_in...    # All of the gfollowing ddocuments with similar name type show how the data was pre cleansed of dup;licates, Nulls, Redundant collumns, and potentially eronious data.
+-     - Creating_gold Views.sql
+-     - Data_model_star_schema
+-     - load_silver_database.sql
+-     - Silver_ddl.sql
+-     - Silver_quality_checks.sql
+- Scripts
+      - Bronze
+          - Create_bronze_layer_tables.sql
+          - load_bronze_database.sql
+      - Silver
+          - init_databse.sql
+          - init_schemas
+          - proc_load_bronze
+      - Gold
+          - ddl_gold
+- Tests
+      - Silver_tests
+      - quality_checks_gold
+- README.md
+- LICENCE
 ## Licence
 This project is licensed under the [MIT license](https://opensource.org/license/mit). You are free to use, modify, and share this project with proper attribution.
 
